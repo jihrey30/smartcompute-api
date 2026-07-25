@@ -9,6 +9,9 @@ async function bootstrap() {
   // Enable CORS
   app.enableCors();
 
+  // Set global prefix for all REST endpoints
+  app.setGlobalPrefix('api');
+
   // Setup Global Validation Pipe
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
