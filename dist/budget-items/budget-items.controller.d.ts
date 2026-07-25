@@ -1,0 +1,81 @@
+import { BudgetItemsService } from './budget-items.service';
+import { Prisma } from '@prisma/client';
+export declare class BudgetItemsController {
+    private readonly budgetItemsService;
+    constructor(budgetItemsService: BudgetItemsService);
+    create(data: Prisma.BudgetItemCreateInput): Prisma.Prisma__BudgetItemClient<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        sortOrder: number;
+        type: import("@prisma/client").$Enums.ItemType;
+        isStarred: boolean;
+        notes: string | null;
+        categoryId: string | null;
+        payPeriodId: string;
+        templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    findAll(): Prisma.PrismaPromise<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        sortOrder: number;
+        type: import("@prisma/client").$Enums.ItemType;
+        isStarred: boolean;
+        notes: string | null;
+        categoryId: string | null;
+        payPeriodId: string;
+        templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
+    }[]>;
+    findOne(id: string): Prisma.Prisma__BudgetItemClient<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        sortOrder: number;
+        type: import("@prisma/client").$Enums.ItemType;
+        isStarred: boolean;
+        notes: string | null;
+        categoryId: string | null;
+        payPeriodId: string;
+        templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
+    } | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    update(id: string, data: Prisma.BudgetItemUpdateInput): Prisma.Prisma__BudgetItemClient<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        sortOrder: number;
+        type: import("@prisma/client").$Enums.ItemType;
+        isStarred: boolean;
+        notes: string | null;
+        categoryId: string | null;
+        payPeriodId: string;
+        templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    remove(id: string): Prisma.Prisma__BudgetItemClient<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        sortOrder: number;
+        type: import("@prisma/client").$Enums.ItemType;
+        isStarred: boolean;
+        notes: string | null;
+        categoryId: string | null;
+        payPeriodId: string;
+        templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+}
