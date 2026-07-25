@@ -1,0 +1,229 @@
+// ============================================================================
+// Budget App — Prisma Schema
+// ============================================================================
+// Design notes:
+// - Users can configure their own payday(s) (e.g. 15th & 30th) via PaySchedule.
+// - Each concrete cycle ("July 30", "August 15") is a PayPeriod row, generated
+//   from the PaySchedule (either by a cron job / server action or on demand).
+// - Recurring line items (Transportation Allowance, Grocery, etc.) live as
+//   BudgetItemTemplate so they don't need to be retyped every period; each
+//   PayPeriod gets its own BudgetItem rows cloned from the active templates,
+//   which can then be edited/overridden per period without touching the template.
+// - BudgetCategory captures the color-coded groupings seen in the sheet
+//   (black/starred essentials, green "to collect" income, purple debts).
+// - The dropdown in column D maps to BudgetItem.status.
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------------------------------------------------------------
+// Enums
+// ----------------------------------------------------------------------------
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PayFrequency {
+  MONTHLY // one payday per month
+  SEMI_MONTHLY // two fixed calendar days per month (e.g. 15th & 30th) — matches your sheet
+  BIWEEKLY // every 14 days
+  WEEKLY
+  CUSTOM
+}
+
+enum ItemType {
+  EXPENSE // black/starred rows: Transportation Allowance, Grocery, etc.
+  DEBT // purple rows: BPI Credit Card, SPayLater, etc.
+  INCOME // green rows: Collect 1K From Accenture
+  SAVINGS // e.g. "Savings" row
+}
+
+enum ItemStatus {
+  PENDING
+  PAID
+  PARTIAL
+  SKIPPED
+  OVERDUE
+}
+
+// ----------------------------------------------------------------------------
+// Users & Auth
+// ----------------------------------------------------------------------------
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  passwordHash String
+  name         String?
+  role         Role    @default(USER)
+  currency     String  @default("PHP")
+  isActive     Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  paySchedule   PaySchedule?
+  payPeriods    PayPeriod[]
+  categories    BudgetCategory[]
+  itemTemplates BudgetItemTemplate[]
+
+  @@index([role])
+}
+
+// ----------------------------------------------------------------------------
+// Payday configuration
+// ----------------------------------------------------------------------------
+
+model PaySchedule {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  frequency PayFrequency @default(SEMI_MONTHLY)
+
+  // Calendar days of the month payday falls on, e.g. [15, 30].
+  // For months with fewer days (e.g. no 30th in Feb), the generator
+  // should clamp to the last day of the month.
+  payDays Int[] @default([15, 30])
+
+  // Used only when frequency = WEEKLY / BIWEEKLY, 0 = Sunday ... 6 = Saturday
+  anchorWeekday Int?
+
+  // Used only when frequency = BIWEEKLY / CUSTOM to compute the next date
+  anchorDate DateTime?
+
+  timezone String @default("Asia/Manila")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ----------------------------------------------------------------------------
+// Categories (color-coded groupings)
+// ----------------------------------------------------------------------------
+
+model BudgetCategory {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String // e.g. "Necessities", "Bills", "Debts & Credit", "Income"
+  color     String @default("#000000") // hex, drives the row color in UI
+  sortOrder Int    @default(0)
+
+  templates BudgetItemTemplate[]
+  items     BudgetItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+// ----------------------------------------------------------------------------
+// Recurring item templates (the "starred" rows that repeat every period)
+// ----------------------------------------------------------------------------
+
+model BudgetItemTemplate {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  categoryId String?
+  category   BudgetCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  name          String // "Transportation Allowance", "Cat necessities", etc.
+  type          ItemType @default(EXPENSE)
+  defaultAmount Decimal  @db.Decimal(12, 2)
+  isStarred     Boolean  @default(true)
+  isActive      Boolean  @default(true) // stop generating this item without deleting history
+  sortOrder     Int      @default(0)
+  notes         String?
+
+  items BudgetItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId, isActive])
+}
+
+// ----------------------------------------------------------------------------
+// Concrete pay periods ("July 30", "August 15", ...)
+// ----------------------------------------------------------------------------
+
+model PayPeriod {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  label       String // e.g. "July 30" — denormalized for display, derived from payDate
+  payDate     DateTime // the actual payday date this period is anchored to
+  periodStart DateTime? // optional: start of the covered date range
+  periodEnd   DateTime? // optional: end of the covered date range
+
+  // Denormalized totals kept in sync via app logic / triggers for fast reads,
+  // but always re-derivable from BudgetItem rows.
+  totalAllocated Decimal @default(0) @db.Decimal(12, 2) // sum of EXPENSE/DEBT/SAVINGS ("Total" row)
+  totalIncome    Decimal @default(0) @db.Decimal(12, 2) // "Total Income"
+  totalBalance   Decimal @default(0) @db.Decimal(12, 2) // "Total Balance" = totalIncome - totalAllocated
+
+  items BudgetItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, payDate])
+  @@index([userId, payDate])
+}
+
+// ----------------------------------------------------------------------------
+// Line items within a specific pay period (one row in the sheet)
+// ----------------------------------------------------------------------------
+
+model BudgetItem {
+  id          String    @id @default(cuid())
+  payPeriodId String
+  payPeriod   PayPeriod @relation(fields: [payPeriodId], references: [id], onDelete: Cascade)
+
+  templateId String?
+  template   BudgetItemTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+
+  categoryId String?
+  category   BudgetCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  name      String // copied from template at creation time, editable per period
+  type      ItemType   @default(EXPENSE)
+  amount    Decimal    @db.Decimal(12, 2)
+  isStarred Boolean    @default(false)
+  status    ItemStatus @default(PENDING) // powers the column D dropdown
+  sortOrder Int        @default(0)
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([payPeriodId])
+  @@index([payPeriodId, type])
+}
+
+// ----------------------------------------------------------------------------
+// Seeder Tracking
+// ----------------------------------------------------------------------------
+
+model SeedHistory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
