@@ -13,10 +13,10 @@ export declare class BudgetItemsController {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
         templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     findAll(): Prisma.PrismaPromise<{
         id: string;
@@ -28,10 +28,10 @@ export declare class BudgetItemsController {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
         templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
     }[]>;
     findOne(id: string): Prisma.Prisma__BudgetItemClient<{
         id: string;
@@ -43,10 +43,10 @@ export declare class BudgetItemsController {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
         templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
     } | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     update(id: string, data: Prisma.BudgetItemUpdateInput): Prisma.Prisma__BudgetItemClient<{
         id: string;
@@ -58,10 +58,10 @@ export declare class BudgetItemsController {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
         templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     remove(id: string): Prisma.Prisma__BudgetItemClient<{
         id: string;
@@ -73,9 +73,9 @@ export declare class BudgetItemsController {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
         templateId: string | null;
+        amount: Prisma.Decimal;
+        status: import("@prisma/client").$Enums.ItemStatus;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
 }

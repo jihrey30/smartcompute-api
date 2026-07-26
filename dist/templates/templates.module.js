@@ -16,7 +16,7 @@ exports.TemplatesModule = TemplatesModule;
 exports.TemplatesModule = TemplatesModule = __decorate([
     (0, common_1.Module)({
         controllers: [templates_controller_1.TemplatesController],
-        providers: [templates_service_1.TemplatesService]
+        providers: [templates_service_1.TemplatesService],
     })
 ], TemplatesModule);
 //# sourceMappingURL=templates.module.js.map

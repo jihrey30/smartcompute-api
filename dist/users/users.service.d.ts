@@ -25,6 +25,17 @@ export declare class UsersService {
         createdAt: Date;
         updatedAt: Date;
     }[]>;
+    findByEmail(email: string): Prisma.Prisma__UserClient<{
+        id: string;
+        email: string;
+        passwordHash: string;
+        name: string | null;
+        role: import("@prisma/client").$Enums.Role;
+        currency: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+    } | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     findOne(id: string): Prisma.Prisma__UserClient<{
         id: string;
         email: string;

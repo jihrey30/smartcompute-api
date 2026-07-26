@@ -16,7 +16,7 @@ exports.PayPeriodsModule = PayPeriodsModule;
 exports.PayPeriodsModule = PayPeriodsModule = __decorate([
     (0, common_1.Module)({
         controllers: [pay_periods_controller_1.PayPeriodsController],
-        providers: [pay_periods_service_1.PayPeriodsService]
+        providers: [pay_periods_service_1.PayPeriodsService],
     })
 ], PayPeriodsModule);
 //# sourceMappingURL=pay-periods.module.js.map

@@ -4,6 +4,6 @@ import { PayScheduleService } from './pay-schedule.service';
 
 @Module({
   controllers: [PayScheduleController],
-  providers: [PayScheduleService]
+  providers: [PayScheduleService],
 })
 export class PayScheduleModule {}

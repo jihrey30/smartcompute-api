@@ -17,12 +17,22 @@ const categories_module_1 = require("./categories/categories.module");
 const templates_module_1 = require("./templates/templates.module");
 const pay_periods_module_1 = require("./pay-periods/pay-periods.module");
 const budget_items_module_1 = require("./budget-items/budget-items.module");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule, users_module_1.UsersModule, pay_schedule_module_1.PayScheduleModule, categories_module_1.CategoriesModule, templates_module_1.TemplatesModule, pay_periods_module_1.PayPeriodsModule, budget_items_module_1.BudgetItemsModule],
+        imports: [
+            prisma_module_1.PrismaModule,
+            users_module_1.UsersModule,
+            auth_module_1.AuthModule,
+            pay_schedule_module_1.PayScheduleModule,
+            categories_module_1.CategoriesModule,
+            templates_module_1.TemplatesModule,
+            pay_periods_module_1.PayPeriodsModule,
+            budget_items_module_1.BudgetItemsModule,
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

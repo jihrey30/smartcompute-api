@@ -16,7 +16,7 @@ exports.PayScheduleModule = PayScheduleModule;
 exports.PayScheduleModule = PayScheduleModule = __decorate([
     (0, common_1.Module)({
         controllers: [pay_schedule_controller_1.PayScheduleController],
-        providers: [pay_schedule_service_1.PayScheduleService]
+        providers: [pay_schedule_service_1.PayScheduleService],
     })
 ], PayScheduleModule);
 //# sourceMappingURL=pay-schedule.module.js.map

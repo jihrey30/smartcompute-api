@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { TemplatesService } from './templates.service';
 import { Prisma } from '@prisma/client';
 
@@ -22,7 +30,10 @@ export class TemplatesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() data: Prisma.BudgetItemTemplateUpdateInput) {
+  update(
+    @Param('id') id: string,
+    @Body() data: Prisma.BudgetItemTemplateUpdateInput,
+  ) {
     return this.templatesService.update(id, data);
   }
 
