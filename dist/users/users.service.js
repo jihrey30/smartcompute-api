@@ -23,6 +23,9 @@ let UsersService = class UsersService {
     findAll() {
         return this.prisma.user.findMany();
     }
+    findByEmail(email) {
+        return this.prisma.user.findUnique({ where: { email } });
+    }
     findOne(id) {
         return this.prisma.user.findUnique({ where: { id } });
     }

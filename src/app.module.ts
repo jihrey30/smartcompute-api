@@ -8,9 +8,10 @@ import { CategoriesModule } from './categories/categories.module';
 import { TemplatesModule } from './templates/templates.module';
 import { PayPeriodsModule } from './pay-periods/pay-periods.module';
 import { BudgetItemsModule } from './budget-items/budget-items.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, PayScheduleModule, CategoriesModule, TemplatesModule, PayPeriodsModule, BudgetItemsModule],
+  imports: [PrismaModule, UsersModule, AuthModule, PayScheduleModule, CategoriesModule, TemplatesModule, PayPeriodsModule, BudgetItemsModule],
   controllers: [AppController],
   providers: [AppService],
 })
