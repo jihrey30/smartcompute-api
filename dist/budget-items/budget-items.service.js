@@ -17,7 +17,24 @@ let BudgetItemsService = class BudgetItemsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    create(data) {
+    async create(data) {
+        if (!data.status) {
+            const payPeriodId = data.payPeriod.connect?.id;
+            if (payPeriodId) {
+                const payPeriod = await this.prisma.payPeriod.findUnique({
+                    where: { id: payPeriodId },
+                    select: { userId: true }
+                });
+                if (payPeriod) {
+                    const toPayStatus = await this.prisma.budgetStatus.findFirst({
+                        where: { userId: payPeriod.userId, slug: 'to-pay' }
+                    });
+                    if (toPayStatus) {
+                        data.status = { connect: { id: toPayStatus.id } };
+                    }
+                }
+            }
+        }
         return this.prisma.budgetItem.create({ data });
     }
     findAll() {
@@ -31,6 +48,16 @@ let BudgetItemsService = class BudgetItemsService {
             where: { id },
             data,
         });
+    }
+    async updateBulk(items) {
+        const updates = items.map(item => this.prisma.budgetItem.update({
+            where: { id: item.id },
+            data: {
+                statusId: item.statusId,
+                sortOrder: item.sortOrder
+            }
+        }));
+        return this.prisma.$transaction(updates);
     }
     remove(id) {
         return this.prisma.budgetItem.delete({ where: { id } });

@@ -6,7 +6,24 @@ import { Prisma } from '@prisma/client';
 export class BudgetItemsService {
   constructor(private prisma: PrismaService) {}
 
-  create(data: Prisma.BudgetItemCreateInput) {
+  async create(data: Prisma.BudgetItemCreateInput) {
+    if (!data.status) {
+      const payPeriodId = data.payPeriod.connect?.id;
+      if (payPeriodId) {
+        const payPeriod = await this.prisma.payPeriod.findUnique({
+          where: { id: payPeriodId },
+          select: { userId: true }
+        });
+        if (payPeriod) {
+          const toPayStatus = await this.prisma.budgetStatus.findFirst({
+            where: { userId: payPeriod.userId, slug: 'to-pay' }
+          });
+          if (toPayStatus) {
+            data.status = { connect: { id: toPayStatus.id } };
+          }
+        }
+      }
+    }
     return this.prisma.budgetItem.create({ data });
   }
 
@@ -23,6 +40,19 @@ export class BudgetItemsService {
       where: { id },
       data,
     });
+  }
+
+  async updateBulk(items: { id: string; statusId: string | null; sortOrder: number }[]) {
+    const updates = items.map(item => 
+      this.prisma.budgetItem.update({
+        where: { id: item.id },
+        data: { 
+          statusId: item.statusId,
+          sortOrder: item.sortOrder 
+        }
+      })
+    );
+    return this.prisma.$transaction(updates);
   }
 
   remove(id: string) {

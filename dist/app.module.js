@@ -14,10 +14,12 @@ const prisma_module_1 = require("./prisma/prisma.module");
 const users_module_1 = require("./users/users.module");
 const pay_schedule_module_1 = require("./pay-schedule/pay-schedule.module");
 const categories_module_1 = require("./categories/categories.module");
-const templates_module_1 = require("./templates/templates.module");
+const automations_module_1 = require("./automations/automations.module");
 const pay_periods_module_1 = require("./pay-periods/pay-periods.module");
 const budget_items_module_1 = require("./budget-items/budget-items.module");
 const auth_module_1 = require("./auth/auth.module");
+const statuses_module_1 = require("./statuses/statuses.module");
+const metrics_module_1 = require("./metrics/metrics.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,9 +31,11 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             pay_schedule_module_1.PayScheduleModule,
             categories_module_1.CategoriesModule,
-            templates_module_1.TemplatesModule,
+            automations_module_1.AutomationsModule,
             pay_periods_module_1.PayPeriodsModule,
             budget_items_module_1.BudgetItemsModule,
+            statuses_module_1.StatusesModule,
+            metrics_module_1.MetricsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

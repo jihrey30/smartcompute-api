@@ -10,6 +10,7 @@ export declare class UsersService {
         name: string | null;
         role: import("@prisma/client").$Enums.Role;
         currency: string;
+        buttonStyle: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -21,6 +22,7 @@ export declare class UsersService {
         name: string | null;
         role: import("@prisma/client").$Enums.Role;
         currency: string;
+        buttonStyle: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -32,6 +34,7 @@ export declare class UsersService {
         name: string | null;
         role: import("@prisma/client").$Enums.Role;
         currency: string;
+        buttonStyle: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -43,6 +46,7 @@ export declare class UsersService {
         name: string | null;
         role: import("@prisma/client").$Enums.Role;
         currency: string;
+        buttonStyle: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -54,6 +58,7 @@ export declare class UsersService {
         name: string | null;
         role: import("@prisma/client").$Enums.Role;
         currency: string;
+        buttonStyle: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -65,6 +70,7 @@ export declare class UsersService {
         name: string | null;
         role: import("@prisma/client").$Enums.Role;
         currency: string;
+        buttonStyle: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;

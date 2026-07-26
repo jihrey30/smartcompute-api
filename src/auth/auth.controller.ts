@@ -1,6 +1,7 @@
-import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Post, Get, Patch, UseGuards, Request } from '@nestjs/common';
 import { AuthService, UserWithoutPassword } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Prisma } from '@prisma/client';
 
 @Controller('auth')
@@ -16,5 +17,18 @@ export class AuthController {
   @Post('register')
   async register(@Body() createUserDto: Prisma.UserCreateInput) {
     return this.authService.register(createUserDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async getProfile(@Request() req: any) {
+    // The JwtAuthGuard populates req.user with { userId, email, role }
+    return this.authService.getProfile(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('preferences')
+  async updatePreferences(@Request() req: any, @Body() data: { buttonStyle?: string, currency?: string }) {
+    return this.authService.updatePreferences(req.user.userId, data);
   }
 }

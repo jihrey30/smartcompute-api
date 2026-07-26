@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 export declare class BudgetItemsService {
     private prisma;
     constructor(prisma: PrismaService);
-    create(data: Prisma.BudgetItemCreateInput): Prisma.Prisma__BudgetItemClient<{
+    create(data: Prisma.BudgetItemCreateInput): Promise<{
         id: string;
         name: string;
         createdAt: Date;
@@ -13,11 +13,12 @@ export declare class BudgetItemsService {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
-        templateId: string | null;
-    }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+        automationId: string | null;
+        statusId: string | null;
+        amount: Prisma.Decimal;
+        targetDate: Date | null;
+    }>;
     findAll(): Prisma.PrismaPromise<{
         id: string;
         name: string;
@@ -28,10 +29,11 @@ export declare class BudgetItemsService {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
-        templateId: string | null;
+        automationId: string | null;
+        statusId: string | null;
+        amount: Prisma.Decimal;
+        targetDate: Date | null;
     }[]>;
     findOne(id: string): Prisma.Prisma__BudgetItemClient<{
         id: string;
@@ -43,10 +45,11 @@ export declare class BudgetItemsService {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
-        templateId: string | null;
+        automationId: string | null;
+        statusId: string | null;
+        amount: Prisma.Decimal;
+        targetDate: Date | null;
     } | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     update(id: string, data: Prisma.BudgetItemUpdateInput): Prisma.Prisma__BudgetItemClient<{
         id: string;
@@ -58,11 +61,32 @@ export declare class BudgetItemsService {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
-        templateId: string | null;
+        automationId: string | null;
+        statusId: string | null;
+        amount: Prisma.Decimal;
+        targetDate: Date | null;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    updateBulk(items: {
+        id: string;
+        statusId: string | null;
+        sortOrder: number;
+    }[]): Promise<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        sortOrder: number;
+        type: import("@prisma/client").$Enums.ItemType;
+        isStarred: boolean;
+        notes: string | null;
+        categoryId: string | null;
+        payPeriodId: string;
+        automationId: string | null;
+        statusId: string | null;
+        amount: Prisma.Decimal;
+        targetDate: Date | null;
+    }[]>;
     remove(id: string): Prisma.Prisma__BudgetItemClient<{
         id: string;
         name: string;
@@ -73,9 +97,10 @@ export declare class BudgetItemsService {
         isStarred: boolean;
         notes: string | null;
         categoryId: string | null;
-        amount: Prisma.Decimal;
-        status: import("@prisma/client").$Enums.ItemStatus;
         payPeriodId: string;
-        templateId: string | null;
+        automationId: string | null;
+        statusId: string | null;
+        amount: Prisma.Decimal;
+        targetDate: Date | null;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
 }

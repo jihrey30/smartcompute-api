@@ -3,39 +3,24 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { PayScheduleService } from './pay-schedule.service';
-import { Prisma } from '@prisma/client';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('pay-schedule')
 export class PayScheduleController {
   constructor(private readonly payScheduleService: PayScheduleService) {}
 
-  @Post()
-  create(@Body() data: Prisma.PayScheduleCreateInput) {
-    return this.payScheduleService.create(data);
-  }
-
   @Get()
-  findAll() {
-    return this.payScheduleService.findAll();
+  getSettings(@Request() req: any) {
+    return this.payScheduleService.getSettings(req.user.userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.payScheduleService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() data: Prisma.PayScheduleUpdateInput) {
-    return this.payScheduleService.update(id, data);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.payScheduleService.remove(id);
+  @Post()
+  upsertSettings(@Request() req: any, @Body() data: any) {
+    return this.payScheduleService.upsertSettings(req.user.userId, data);
   }
 }

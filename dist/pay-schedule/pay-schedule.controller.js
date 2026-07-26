@@ -15,65 +15,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PayScheduleController = void 0;
 const common_1 = require("@nestjs/common");
 const pay_schedule_service_1 = require("./pay-schedule.service");
-const client_1 = require("@prisma/client");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let PayScheduleController = class PayScheduleController {
     payScheduleService;
     constructor(payScheduleService) {
         this.payScheduleService = payScheduleService;
     }
-    create(data) {
-        return this.payScheduleService.create(data);
+    getSettings(req) {
+        return this.payScheduleService.getSettings(req.user.userId);
     }
-    findAll() {
-        return this.payScheduleService.findAll();
-    }
-    findOne(id) {
-        return this.payScheduleService.findOne(id);
-    }
-    update(id, data) {
-        return this.payScheduleService.update(id, data);
-    }
-    remove(id) {
-        return this.payScheduleService.remove(id);
+    upsertSettings(req, data) {
+        return this.payScheduleService.upsertSettings(req.user.userId, data);
     }
 };
 exports.PayScheduleController = PayScheduleController;
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], PayScheduleController.prototype, "create", null);
+], PayScheduleController.prototype, "getSettings", null);
 __decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], PayScheduleController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PayScheduleController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
-], PayScheduleController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PayScheduleController.prototype, "remove", null);
+], PayScheduleController.prototype, "upsertSettings", null);
 exports.PayScheduleController = PayScheduleController = __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('pay-schedule'),
     __metadata("design:paramtypes", [pay_schedule_service_1.PayScheduleService])
 ], PayScheduleController);
