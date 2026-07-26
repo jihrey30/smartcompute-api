@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService, UserWithoutPassword } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Prisma } from '@prisma/client';
 
@@ -9,7 +9,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req: any) {
+  login(@Request() req: { user: UserWithoutPassword }) {
     return this.authService.login(req.user);
   }
 

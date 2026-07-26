@@ -16,7 +16,7 @@ exports.BudgetItemsModule = BudgetItemsModule;
 exports.BudgetItemsModule = BudgetItemsModule = __decorate([
     (0, common_1.Module)({
         controllers: [budget_items_controller_1.BudgetItemsController],
-        providers: [budget_items_service_1.BudgetItemsService]
+        providers: [budget_items_service_1.BudgetItemsService],
     })
 ], BudgetItemsModule);
 //# sourceMappingURL=budget-items.module.js.map

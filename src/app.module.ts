@@ -11,7 +11,16 @@ import { BudgetItemsModule } from './budget-items/budget-items.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, PayScheduleModule, CategoriesModule, TemplatesModule, PayPeriodsModule, BudgetItemsModule],
+  imports: [
+    PrismaModule,
+    UsersModule,
+    AuthModule,
+    PayScheduleModule,
+    CategoriesModule,
+    TemplatesModule,
+    PayPeriodsModule,
+    BudgetItemsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

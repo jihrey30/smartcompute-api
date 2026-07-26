@@ -4,6 +4,6 @@ import { BudgetItemsService } from './budget-items.service';
 
 @Module({
   controllers: [BudgetItemsController],
-  providers: [BudgetItemsService]
+  providers: [BudgetItemsService],
 })
 export class BudgetItemsModule {}
