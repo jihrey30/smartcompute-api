@@ -19,9 +19,24 @@ const seeders: Record<string, () => Promise<void>> = {
     });
     */
   },
-  '02-init-templates': async () => {
-    // Example: Seed budget item templates
-    console.log('Seeding budget templates...');
+  '03-init-user': async () => {
+    console.log('Seeding default user...');
+    
+    // Create a default test user if one doesn't exist
+    const existingUser = await prisma.user.findUnique({
+      where: { email: 'test@example.com' }
+    });
+
+    if (!existingUser) {
+      await prisma.user.create({
+        data: {
+          email: 'test@example.com',
+          passwordHash: 'dummy-hash',
+          name: 'Demo User',
+        }
+      });
+      console.log('Default user created.');
+    }
   },
 };
 
