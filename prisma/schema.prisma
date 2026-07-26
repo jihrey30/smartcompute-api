@@ -60,7 +60,7 @@ enum AutomationRecurrence {
 model User {
   id           String  @id @default(cuid())
   email        String  @unique
-  passwordHash String
+  passwordHash String?
   name         String?
   role         Role    @default(USER)
   currency     String  @default("PHP")
