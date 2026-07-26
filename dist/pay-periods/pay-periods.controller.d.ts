@@ -27,10 +27,10 @@ export declare class PayPeriodsController {
             isStarred: boolean;
             notes: string | null;
             categoryId: string | null;
-            payPeriodId: string;
-            templateId: string | null;
             amount: Prisma.Decimal;
             status: import("@prisma/client").$Enums.ItemStatus;
+            payPeriodId: string;
+            templateId: string | null;
         }[];
     } & {
         id: string;
@@ -56,10 +56,10 @@ export declare class PayPeriodsController {
             isStarred: boolean;
             notes: string | null;
             categoryId: string | null;
-            payPeriodId: string;
-            templateId: string | null;
             amount: Prisma.Decimal;
             status: import("@prisma/client").$Enums.ItemStatus;
+            payPeriodId: string;
+            templateId: string | null;
         }[];
     } & {
         id: string;
