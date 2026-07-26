@@ -42,6 +42,9 @@ export class AuthService {
     if (existingUser) {
       throw new UnauthorizedException('Email already in use');
     }
+    if (!data.passwordHash) {
+      throw new UnauthorizedException('Password is required');
+    }
     const saltOrRounds = 10;
     const passwordHash = await bcrypt.hash(data.passwordHash, saltOrRounds);
 
