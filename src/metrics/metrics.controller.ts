@@ -8,7 +8,7 @@ export class MetricsController {
   constructor(private readonly metricsService: MetricsService) {}
 
   @Get('dashboard')
-  getDashboardMetrics(@Request() req) {
+  getDashboardMetrics(@Request() req: { user: { userId: string } }) {
     return this.metricsService.getDashboardMetrics(req.user.userId);
   }
 }

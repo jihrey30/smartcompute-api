@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
@@ -6,13 +6,23 @@ import { Prisma } from '@prisma/client';
 export class AutomationsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(userId: string, data: any) {
-    const automation = await this.prisma.automation.upsert({ 
+  async create(
+    userId: string,
+    data: {
+      name: string;
+      defaultAmount?: number;
+      type?: string;
+      isActive?: boolean;
+      recurrence?: string;
+      startPayPeriodId?: string;
+    },
+  ) {
+    const automation = await this.prisma.automation.upsert({
       where: {
         userId_name: {
           userId,
           name: data.name,
-        }
+        },
       },
       update: {
         defaultAmount: data.defaultAmount,
@@ -26,28 +36,30 @@ export class AutomationsService {
         type: data.type,
         isActive: data.isActive,
         recurrence: data.recurrence,
-        user: { connect: { id: userId } }
-      } 
+        user: { connect: { id: userId } },
+      },
     });
 
     if (data.startPayPeriodId) {
       const startPeriod = await this.prisma.payPeriod.findUnique({
-        where: { id: data.startPayPeriodId }
+        where: { id: data.startPayPeriodId },
       });
 
       if (startPeriod) {
-        const schedule = await this.prisma.paySchedule.findUnique({ where: { userId } });
+        const schedule = await this.prisma.paySchedule.findUnique({
+          where: { userId },
+        });
         if (schedule) {
           const otherPeriods = await this.prisma.payPeriod.findMany({
             where: {
               userId,
-              id: { not: startPeriod.id }
+              id: { not: startPeriod.id },
             },
-            orderBy: { payDate: 'asc' }
+            orderBy: { payDate: 'asc' },
           });
 
           const toPayStatus = await this.prisma.budgetStatus.findFirst({
-            where: { userId, slug: 'to-pay' }
+            where: { userId, slug: 'to-pay' },
           });
 
           for (const period of otherPeriods) {
@@ -55,15 +67,17 @@ export class AutomationsService {
             const isFirstPayday = currentDay === schedule.payDays[0];
             const isSecondPayday = currentDay === schedule.payDays[1];
 
-            if (automation.recurrence === 'FIRST_PAYDAY' && !isFirstPayday) continue;
-            if (automation.recurrence === 'SECOND_PAYDAY' && !isSecondPayday) continue;
+            if (automation.recurrence === 'FIRST_PAYDAY' && !isFirstPayday)
+              continue;
+            if (automation.recurrence === 'SECOND_PAYDAY' && !isSecondPayday)
+              continue;
 
             // Check if item already exists in this future pay period to prevent duplicates
             const existingItem = await this.prisma.budgetItem.findFirst({
               where: {
                 payPeriodId: period.id,
                 name: automation.name,
-              }
+              },
             });
 
             if (!existingItem) {
@@ -74,9 +88,13 @@ export class AutomationsService {
                   type: automation.type,
                   payPeriod: { connect: { id: period.id } },
                   automation: { connect: { id: automation.id } },
-                  category: automation.categoryId ? { connect: { id: automation.categoryId } } : undefined,
-                  ...(toPayStatus ? { status: { connect: { id: toPayStatus.id } } } : {})
-                }
+                  category: automation.categoryId
+                    ? { connect: { id: automation.categoryId } }
+                    : undefined,
+                  ...(toPayStatus
+                    ? { status: { connect: { id: toPayStatus.id } } }
+                    : {}),
+                },
               });
             }
           }

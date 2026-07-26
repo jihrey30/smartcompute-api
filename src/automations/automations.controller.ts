@@ -19,23 +19,37 @@ export class AutomationsController {
   constructor(private readonly automationsService: AutomationsService) {}
 
   @Post()
-  create(@Request() req: any, @Body() data: any) {
+  create(
+    @Request() req: { user: { userId: string } },
+    @Body()
+    data: {
+      name: string;
+      defaultAmount?: number;
+      type?: string;
+      isActive?: boolean;
+      recurrence?: string;
+      startPayPeriodId?: string;
+    },
+  ) {
     return this.automationsService.create(req.user.userId, data);
   }
 
   @Get()
-  findAll(@Request() req: any) {
+  findAll(@Request() req: { user: { userId: string } }) {
     return this.automationsService.findAll(req.user.userId);
   }
 
   @Get(':id')
-  findOne(@Request() req: any, @Param('id') id: string) {
+  findOne(
+    @Request() req: { user: { userId: string } },
+    @Param('id') id: string,
+  ) {
     return this.automationsService.findOne(req.user.userId, id);
   }
 
   @Patch(':id')
   update(
-    @Request() req: any,
+    @Request() req: { user: { userId: string } },
     @Param('id') id: string,
     @Body() data: Prisma.AutomationUpdateInput,
   ) {
@@ -43,7 +57,10 @@ export class AutomationsController {
   }
 
   @Delete(':id')
-  remove(@Request() req: any, @Param('id') id: string) {
+  remove(
+    @Request() req: { user: { userId: string } },
+    @Param('id') id: string,
+  ) {
     return this.automationsService.remove(req.user.userId, id);
   }
 }

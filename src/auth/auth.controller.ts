@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Get, Patch, UseGuards, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthService, UserWithoutPassword } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -21,14 +29,17 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getProfile(@Request() req: any) {
+  async getProfile(@Request() req: { user: { userId: string } }) {
     // The JwtAuthGuard populates req.user with { userId, email, role }
     return this.authService.getProfile(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('preferences')
-  async updatePreferences(@Request() req: any, @Body() data: { buttonStyle?: string, currency?: string }) {
+  async updatePreferences(
+    @Request() req: { user: { userId: string } },
+    @Body() data: { buttonStyle?: string; currency?: string },
+  ) {
     return this.authService.updatePreferences(req.user.userId, data);
   }
 }

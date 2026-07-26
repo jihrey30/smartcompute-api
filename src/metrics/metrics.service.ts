@@ -22,21 +22,26 @@ export class MetricsService {
             status: {
               select: {
                 slug: true,
-                name: true
-              }
-            }
-          }
-        }
-      }
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    const metrics = periods.map(period => {
+    const metrics = periods.map((period) => {
       // Filter out INCOME items (we only track expenses/debts for milestones)
-      const trackableItems = period.items.filter(item => item.type !== 'INCOME' && item.type !== 'SAVINGS');
+      const trackableItems = period.items.filter(
+        (item) => item.type !== 'INCOME' && item.type !== 'SAVINGS',
+      );
       const totalItems = trackableItems.length;
-      
+
       const paidItems = trackableItems.filter(
-        item => item.status && (item.status.slug === 'paid' || item.status.name.toLowerCase() === 'paid')
+        (item) =>
+          item.status &&
+          (item.status.slug === 'paid' ||
+            item.status.name.toLowerCase() === 'paid'),
       ).length;
 
       return {
@@ -47,7 +52,7 @@ export class MetricsService {
         totalAllocated: period.totalAllocated,
         totalItems,
         paidItems,
-        isComplete: totalItems > 0 && totalItems === paidItems
+        isComplete: totalItems > 0 && totalItems === paidItems,
       };
     });
 

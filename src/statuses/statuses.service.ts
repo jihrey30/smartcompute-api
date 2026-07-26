@@ -6,13 +6,15 @@ import { Prisma } from '@prisma/client';
 export class StatusesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(userId: string, data: any) {
-
-    return this.prisma.budgetStatus.create({ 
+  async create(
+    userId: string,
+    data: Prisma.BudgetStatusCreateWithoutUserInput,
+  ) {
+    return this.prisma.budgetStatus.create({
       data: {
         ...data,
-        user: { connect: { id: userId } }
-      } 
+        user: { connect: { id: userId } },
+      },
     });
   }
 
@@ -27,8 +29,11 @@ export class StatusesService {
     return this.prisma.budgetStatus.findFirst({ where: { id, userId } });
   }
 
-  async update(userId: string, id: string, data: Prisma.BudgetStatusUpdateInput) {
-
+  async update(
+    userId: string,
+    id: string,
+    data: Prisma.BudgetStatusUpdateInput,
+  ) {
     return this.prisma.budgetStatus.updateMany({
       where: { id, userId },
       data,

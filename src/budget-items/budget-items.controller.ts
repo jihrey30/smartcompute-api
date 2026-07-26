@@ -25,7 +25,12 @@ export class BudgetItemsController {
   }
 
   @Patch('bulk-update')
-  updateBulk(@Body() data: { items: { id: string; statusId: string | null; sortOrder: number }[] }) {
+  updateBulk(
+    @Body()
+    data: {
+      items: { id: string; statusId: string | null; sortOrder: number }[];
+    },
+  ) {
     return this.budgetItemsService.updateBulk(data.items);
   }
 

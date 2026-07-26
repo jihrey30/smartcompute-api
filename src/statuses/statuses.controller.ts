@@ -19,23 +19,29 @@ export class StatusesController {
   constructor(private readonly statusesService: StatusesService) {}
 
   @Post()
-  create(@Request() req: any, @Body() data: Prisma.BudgetStatusCreateInput) {
+  create(
+    @Request() req: { user: { userId: string } },
+    @Body() data: Prisma.BudgetStatusCreateInput,
+  ) {
     return this.statusesService.create(req.user.userId, data);
   }
 
   @Get()
-  findAll(@Request() req: any) {
+  findAll(@Request() req: { user: { userId: string } }) {
     return this.statusesService.findAll(req.user.userId);
   }
 
   @Get(':id')
-  findOne(@Request() req: any, @Param('id') id: string) {
+  findOne(
+    @Request() req: { user: { userId: string } },
+    @Param('id') id: string,
+  ) {
     return this.statusesService.findOne(req.user.userId, id);
   }
 
   @Patch(':id')
   update(
-    @Request() req: any,
+    @Request() req: { user: { userId: string } },
     @Param('id') id: string,
     @Body() data: Prisma.BudgetStatusUpdateInput,
   ) {
@@ -43,7 +49,10 @@ export class StatusesController {
   }
 
   @Delete(':id')
-  remove(@Request() req: any, @Param('id') id: string) {
+  remove(
+    @Request() req: { user: { userId: string } },
+    @Param('id') id: string,
+  ) {
     return this.statusesService.remove(req.user.userId, id);
   }
 }
