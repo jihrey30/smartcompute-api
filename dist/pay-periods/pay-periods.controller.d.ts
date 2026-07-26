@@ -3,7 +3,11 @@ import { Prisma } from '@prisma/client';
 export declare class PayPeriodsController {
     private readonly payPeriodsService;
     constructor(payPeriodsService: PayPeriodsService);
-    generateNext(req: any): Promise<({
+    generateNext(req: {
+        user: {
+            userId: string;
+        };
+    }): Promise<({
         items: ({
             category: {
                 id: string;
@@ -53,7 +57,11 @@ export declare class PayPeriodsController {
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
     }) | null>;
-    create(req: any, data: any): Prisma.Prisma__PayPeriodClient<{
+    create(req: {
+        user: {
+            userId: string;
+        };
+    }, data: Prisma.PayPeriodCreateWithoutUserInput): Prisma.Prisma__PayPeriodClient<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -66,7 +74,11 @@ export declare class PayPeriodsController {
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
-    findAll(req: any): Prisma.PrismaPromise<({
+    findAll(req: {
+        user: {
+            userId: string;
+        };
+    }): Prisma.PrismaPromise<({
         items: ({
             category: {
                 id: string;
@@ -116,7 +128,11 @@ export declare class PayPeriodsController {
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
     })[]>;
-    findOne(req: any, id: string): Prisma.Prisma__PayPeriodClient<({
+    findOne(req: {
+        user: {
+            userId: string;
+        };
+    }, id: string): Prisma.Prisma__PayPeriodClient<({
         items: ({
             category: {
                 id: string;
@@ -166,7 +182,11 @@ export declare class PayPeriodsController {
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
     }) | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
-    update(req: any, id: string, data: Prisma.PayPeriodUpdateInput): Promise<{
+    update(req: {
+        user: {
+            userId: string;
+        };
+    }, id: string, data: Prisma.PayPeriodUpdateInput): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -179,5 +199,9 @@ export declare class PayPeriodsController {
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
     }>;
-    remove(req: any, id: string): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    remove(req: {
+        user: {
+            userId: string;
+        };
+    }, id: string): Prisma.PrismaPromise<Prisma.BatchPayload>;
 }

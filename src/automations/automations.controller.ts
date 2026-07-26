@@ -10,7 +10,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { AutomationsService } from './automations.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, ItemType, AutomationRecurrence } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -24,10 +24,10 @@ export class AutomationsController {
     @Body()
     data: {
       name: string;
-      defaultAmount?: number;
-      type?: string;
+      defaultAmount: number;
+      type?: ItemType;
       isActive?: boolean;
-      recurrence?: string;
+      recurrence?: AutomationRecurrence;
       startPayPeriodId?: string;
     },
   ) {

@@ -1,4 +1,5 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 export declare class PayScheduleService {
     private prisma;
     constructor(prisma: PrismaService);
@@ -13,7 +14,7 @@ export declare class PayScheduleService {
         timezone: string;
         userId: string;
     }>;
-    upsertSettings(userId: string, data: any): Promise<{
+    upsertSettings(userId: string, data: Prisma.PayScheduleCreateWithoutUserInput): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;

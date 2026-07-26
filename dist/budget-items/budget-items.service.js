@@ -23,11 +23,11 @@ let BudgetItemsService = class BudgetItemsService {
             if (payPeriodId) {
                 const payPeriod = await this.prisma.payPeriod.findUnique({
                     where: { id: payPeriodId },
-                    select: { userId: true }
+                    select: { userId: true },
                 });
                 if (payPeriod) {
                     const toPayStatus = await this.prisma.budgetStatus.findFirst({
-                        where: { userId: payPeriod.userId, slug: 'to-pay' }
+                        where: { userId: payPeriod.userId, slug: 'to-pay' },
                     });
                     if (toPayStatus) {
                         data.status = { connect: { id: toPayStatus.id } };
@@ -50,12 +50,12 @@ let BudgetItemsService = class BudgetItemsService {
         });
     }
     async updateBulk(items) {
-        const updates = items.map(item => this.prisma.budgetItem.update({
+        const updates = items.map((item) => this.prisma.budgetItem.update({
             where: { id: item.id },
             data: {
                 statusId: item.statusId,
-                sortOrder: item.sortOrder
-            }
+                sortOrder: item.sortOrder,
+            },
         }));
         return this.prisma.$transaction(updates);
     }

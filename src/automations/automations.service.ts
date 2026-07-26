@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, ItemType, AutomationRecurrence } from '@prisma/client';
 
 @Injectable()
 export class AutomationsService {
@@ -10,10 +10,10 @@ export class AutomationsService {
     userId: string,
     data: {
       name: string;
-      defaultAmount?: number;
-      type?: string;
+      defaultAmount: number;
+      type?: ItemType;
       isActive?: boolean;
-      recurrence?: string;
+      recurrence?: AutomationRecurrence;
       startPayPeriodId?: string;
     },
   ) {

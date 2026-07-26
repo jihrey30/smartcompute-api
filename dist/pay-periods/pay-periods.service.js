@@ -21,8 +21,8 @@ let PayPeriodsService = class PayPeriodsService {
         return this.prisma.payPeriod.create({
             data: {
                 ...data,
-                user: { connect: { id: userId } }
-            }
+                user: { connect: { id: userId } },
+            },
         });
     }
     findAll(userId) {
@@ -34,7 +34,7 @@ let PayPeriodsService = class PayPeriodsService {
                     include: {
                         category: true,
                         status: true,
-                    }
+                    },
                 },
             },
         });
@@ -47,7 +47,7 @@ let PayPeriodsService = class PayPeriodsService {
                     include: {
                         category: true,
                         status: true,
-                    }
+                    },
                 },
             },
         });
@@ -65,15 +65,21 @@ let PayPeriodsService = class PayPeriodsService {
         return this.prisma.payPeriod.deleteMany({ where: { id, userId } });
     }
     async generateNext(userId) {
-        let schedule = await this.prisma.paySchedule.findUnique({ where: { userId } });
+        let schedule = await this.prisma.paySchedule.findUnique({
+            where: { userId },
+        });
         if (!schedule) {
             schedule = await this.prisma.paySchedule.create({
-                data: { user: { connect: { id: userId } }, frequency: 'SEMI_MONTHLY', payDays: [15, 30] }
+                data: {
+                    user: { connect: { id: userId } },
+                    frequency: 'SEMI_MONTHLY',
+                    payDays: [15, 30],
+                },
             });
         }
         const latestPeriod = await this.prisma.payPeriod.findFirst({
             where: { userId },
-            orderBy: { payDate: 'desc' }
+            orderBy: { payDate: 'desc' },
         });
         let nextPayDate;
         if (!latestPeriod) {
@@ -82,23 +88,36 @@ let PayPeriodsService = class PayPeriodsService {
         else {
             nextPayDate = this.calculateNextPayDate(latestPeriod.payDate, schedule.frequency, schedule.payDays);
         }
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const monthNames = [
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December',
+        ];
         const label = `${monthNames[nextPayDate.getMonth()]} ${nextPayDate.getDate()}`;
         const newPeriod = await this.prisma.payPeriod.create({
             data: {
                 user: { connect: { id: userId } },
                 label,
                 payDate: nextPayDate,
-            }
+            },
         });
         const automations = await this.prisma.automation.findMany({
-            where: { userId, isActive: true }
+            where: { userId, isActive: true },
         });
         const currentDay = nextPayDate.getDate();
         const isFirstPayday = currentDay === schedule.payDays[0];
         const isSecondPayday = currentDay === schedule.payDays[1];
         const toPayStatus = await this.prisma.budgetStatus.findFirst({
-            where: { userId, slug: 'to-pay' }
+            where: { userId, slug: 'to-pay' },
         });
         for (const item of automations) {
             if (item.recurrence === 'FIRST_PAYDAY' && !isFirstPayday)
@@ -109,28 +128,32 @@ let PayPeriodsService = class PayPeriodsService {
                 data: {
                     payPeriod: { connect: { id: newPeriod.id } },
                     automation: { connect: { id: item.id } },
-                    category: item.categoryId ? { connect: { id: item.categoryId } } : undefined,
+                    category: item.categoryId
+                        ? { connect: { id: item.categoryId } }
+                        : undefined,
                     name: item.name,
                     type: item.type,
                     amount: item.defaultAmount,
                     isStarred: item.isStarred,
                     sortOrder: item.sortOrder,
                     notes: item.notes,
-                    ...(toPayStatus ? { status: { connect: { id: toPayStatus.id } } } : {})
-                }
+                    ...(toPayStatus
+                        ? { status: { connect: { id: toPayStatus.id } } }
+                        : {}),
+                },
             });
         }
         return this.prisma.payPeriod.findUnique({
             where: { id: newPeriod.id },
             include: {
                 items: {
-                    include: { category: true, status: true }
-                }
-            }
+                    include: { category: true, status: true },
+                },
+            },
         });
     }
     calculateNextPayDate(afterDate, frequency, payDays) {
-        let curr = new Date(afterDate);
+        const curr = new Date(afterDate);
         curr.setHours(0, 0, 0, 0);
         if (frequency === 'MONTHLY') {
             const target = payDays[0] || 20;

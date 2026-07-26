@@ -18,14 +18,16 @@ let PayScheduleService = class PayScheduleService {
         this.prisma = prisma;
     }
     async getSettings(userId) {
-        let schedule = await this.prisma.paySchedule.findUnique({ where: { userId } });
+        let schedule = await this.prisma.paySchedule.findUnique({
+            where: { userId },
+        });
         if (!schedule) {
             schedule = await this.prisma.paySchedule.create({
                 data: {
                     user: { connect: { id: userId } },
                     frequency: 'SEMI_MONTHLY',
                     payDays: [15, 30],
-                }
+                },
             });
         }
         return schedule;
@@ -39,7 +41,7 @@ let PayScheduleService = class PayScheduleService {
                 user: { connect: { id: userId } },
                 frequency,
                 payDays,
-            }
+            },
         });
     }
 };

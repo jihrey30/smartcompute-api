@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 export declare class PayPeriodsService {
     private prisma;
     constructor(prisma: PrismaService);
-    create(userId: string, data: any): Prisma.Prisma__PayPeriodClient<{
+    create(userId: string, data: Prisma.PayPeriodCreateWithoutUserInput): Prisma.Prisma__PayPeriodClient<{
         id: string;
         createdAt: Date;
         updatedAt: Date;

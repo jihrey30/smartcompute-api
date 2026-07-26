@@ -16,6 +16,7 @@ exports.PayScheduleController = void 0;
 const common_1 = require("@nestjs/common");
 const pay_schedule_service_1 = require("./pay-schedule.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const client_1 = require("@prisma/client");
 let PayScheduleController = class PayScheduleController {
     payScheduleService;
     constructor(payScheduleService) {
