@@ -48,10 +48,41 @@ export class AuthService {
     const user = await this.usersService.create({
       ...data,
       passwordHash,
+      statuses: {
+        create: [
+          {
+            name: 'To Pay',
+            slug: 'to-pay',
+            color: '#f59e0b', // amber/orange
+            sortOrder: 0,
+          },
+          {
+            name: 'PAID',
+            slug: 'paid',
+            color: '#22c55e', // green
+            sortOrder: 1,
+          },
+        ],
+      },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _unused, ...result } = user;
     return result;
+  }
+
+  async getProfile(userId: string): Promise<UserWithoutPassword> {
+    const user = await this.usersService.findOne(userId);
+    if (!user) throw new UnauthorizedException();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash, ...result } = user;
+    return result;
+  }
+
+  async updatePreferences(
+    userId: string,
+    data: { buttonStyle?: string; currency?: string },
+  ) {
+    return this.usersService.update(userId, data);
   }
 }

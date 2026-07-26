@@ -3,7 +3,65 @@ import { Prisma } from '@prisma/client';
 export declare class PayPeriodsController {
     private readonly payPeriodsService;
     constructor(payPeriodsService: PayPeriodsService);
-    create(data: Prisma.PayPeriodCreateInput): Prisma.Prisma__PayPeriodClient<{
+    generateNext(req: {
+        user: {
+            userId: string;
+        };
+    }): Promise<({
+        items: ({
+            category: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                userId: string;
+                color: string;
+                sortOrder: number;
+            } | null;
+            status: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                userId: string;
+                color: string;
+                sortOrder: number;
+                slug: string | null;
+            } | null;
+        } & {
+            id: string;
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+            sortOrder: number;
+            type: import("@prisma/client").$Enums.ItemType;
+            isStarred: boolean;
+            notes: string | null;
+            categoryId: string | null;
+            payPeriodId: string;
+            automationId: string | null;
+            statusId: string | null;
+            amount: Prisma.Decimal;
+            targetDate: Date | null;
+        })[];
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        label: string;
+        payDate: Date;
+        periodStart: Date | null;
+        periodEnd: Date | null;
+        totalAllocated: Prisma.Decimal;
+        totalIncome: Prisma.Decimal;
+        totalBalance: Prisma.Decimal;
+    }) | null>;
+    create(req: {
+        user: {
+            userId: string;
+        };
+    }, data: Prisma.PayPeriodCreateWithoutUserInput): Prisma.Prisma__PayPeriodClient<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -16,8 +74,32 @@ export declare class PayPeriodsController {
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
-    findAll(): Prisma.PrismaPromise<({
-        items: {
+    findAll(req: {
+        user: {
+            userId: string;
+        };
+    }): Prisma.PrismaPromise<({
+        items: ({
+            category: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                userId: string;
+                color: string;
+                sortOrder: number;
+            } | null;
+            status: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                userId: string;
+                color: string;
+                sortOrder: number;
+                slug: string | null;
+            } | null;
+        } & {
             id: string;
             name: string;
             createdAt: Date;
@@ -28,10 +110,11 @@ export declare class PayPeriodsController {
             notes: string | null;
             categoryId: string | null;
             payPeriodId: string;
-            templateId: string | null;
+            automationId: string | null;
+            statusId: string | null;
             amount: Prisma.Decimal;
-            status: import("@prisma/client").$Enums.ItemStatus;
-        }[];
+            targetDate: Date | null;
+        })[];
     } & {
         id: string;
         createdAt: Date;
@@ -45,8 +128,32 @@ export declare class PayPeriodsController {
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
     })[]>;
-    findOne(id: string): Prisma.Prisma__PayPeriodClient<({
-        items: {
+    findOne(req: {
+        user: {
+            userId: string;
+        };
+    }, id: string): Prisma.Prisma__PayPeriodClient<({
+        items: ({
+            category: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                userId: string;
+                color: string;
+                sortOrder: number;
+            } | null;
+            status: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                userId: string;
+                color: string;
+                sortOrder: number;
+                slug: string | null;
+            } | null;
+        } & {
             id: string;
             name: string;
             createdAt: Date;
@@ -57,10 +164,11 @@ export declare class PayPeriodsController {
             notes: string | null;
             categoryId: string | null;
             payPeriodId: string;
-            templateId: string | null;
+            automationId: string | null;
+            statusId: string | null;
             amount: Prisma.Decimal;
-            status: import("@prisma/client").$Enums.ItemStatus;
-        }[];
+            targetDate: Date | null;
+        })[];
     } & {
         id: string;
         createdAt: Date;
@@ -74,7 +182,11 @@ export declare class PayPeriodsController {
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
     }) | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
-    update(id: string, data: Prisma.PayPeriodUpdateInput): Prisma.Prisma__PayPeriodClient<{
+    update(req: {
+        user: {
+            userId: string;
+        };
+    }, id: string, data: Prisma.PayPeriodUpdateInput): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -86,18 +198,10 @@ export declare class PayPeriodsController {
         totalAllocated: Prisma.Decimal;
         totalIncome: Prisma.Decimal;
         totalBalance: Prisma.Decimal;
-    }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
-    remove(id: string): Prisma.Prisma__PayPeriodClient<{
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        userId: string;
-        label: string;
-        payDate: Date;
-        periodStart: Date | null;
-        periodEnd: Date | null;
-        totalAllocated: Prisma.Decimal;
-        totalIncome: Prisma.Decimal;
-        totalBalance: Prisma.Decimal;
-    }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    }>;
+    remove(req: {
+        user: {
+            userId: string;
+        };
+    }, id: string): Prisma.PrismaPromise<Prisma.BatchPayload>;
 }

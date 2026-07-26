@@ -17,23 +17,32 @@ let PayScheduleService = class PayScheduleService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    create(data) {
-        return this.prisma.paySchedule.create({ data });
-    }
-    findAll() {
-        return this.prisma.paySchedule.findMany();
-    }
-    findOne(id) {
-        return this.prisma.paySchedule.findUnique({ where: { id } });
-    }
-    update(id, data) {
-        return this.prisma.paySchedule.update({
-            where: { id },
-            data,
+    async getSettings(userId) {
+        let schedule = await this.prisma.paySchedule.findUnique({
+            where: { userId },
         });
+        if (!schedule) {
+            schedule = await this.prisma.paySchedule.create({
+                data: {
+                    user: { connect: { id: userId } },
+                    frequency: 'SEMI_MONTHLY',
+                    payDays: [15, 30],
+                },
+            });
+        }
+        return schedule;
     }
-    remove(id) {
-        return this.prisma.paySchedule.delete({ where: { id } });
+    async upsertSettings(userId, data) {
+        const { frequency, payDays } = data;
+        return this.prisma.paySchedule.upsert({
+            where: { userId },
+            update: { frequency, payDays },
+            create: {
+                user: { connect: { id: userId } },
+                frequency,
+                payDays,
+            },
+        });
     }
 };
 exports.PayScheduleService = PayScheduleService;

@@ -16,64 +16,81 @@ exports.PayPeriodsController = void 0;
 const common_1 = require("@nestjs/common");
 const pay_periods_service_1 = require("./pay-periods.service");
 const client_1 = require("@prisma/client");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let PayPeriodsController = class PayPeriodsController {
     payPeriodsService;
     constructor(payPeriodsService) {
         this.payPeriodsService = payPeriodsService;
     }
-    create(data) {
-        return this.payPeriodsService.create(data);
+    generateNext(req) {
+        return this.payPeriodsService.generateNext(req.user.userId);
     }
-    findAll() {
-        return this.payPeriodsService.findAll();
+    create(req, data) {
+        return this.payPeriodsService.create(req.user.userId, data);
     }
-    findOne(id) {
-        return this.payPeriodsService.findOne(id);
+    findAll(req) {
+        return this.payPeriodsService.findAll(req.user.userId);
     }
-    update(id, data) {
-        return this.payPeriodsService.update(id, data);
+    findOne(req, id) {
+        return this.payPeriodsService.findOne(req.user.userId, id);
     }
-    remove(id) {
-        return this.payPeriodsService.remove(id);
+    update(req, id, data) {
+        return this.payPeriodsService.update(req.user.userId, id, data);
+    }
+    remove(req, id) {
+        return this.payPeriodsService.remove(req.user.userId, id);
     }
 };
 exports.PayPeriodsController = PayPeriodsController;
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Post)('generate'),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], PayPeriodsController.prototype, "generateNext", null);
+__decorate([
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], PayPeriodsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], PayPeriodsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], PayPeriodsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Object, String, Object]),
     __metadata("design:returntype", void 0)
 ], PayPeriodsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], PayPeriodsController.prototype, "remove", null);
 exports.PayPeriodsController = PayPeriodsController = __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('pay-periods'),
     __metadata("design:paramtypes", [pay_periods_service_1.PayPeriodsService])
 ], PayPeriodsController);

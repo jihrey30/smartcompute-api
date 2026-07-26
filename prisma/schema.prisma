@@ -47,12 +47,10 @@ enum ItemType {
   SAVINGS // e.g. "Savings" row
 }
 
-enum ItemStatus {
-  PENDING
-  PAID
-  PARTIAL
-  SKIPPED
-  OVERDUE
+enum AutomationRecurrence {
+  EVERY_PAYDAY
+  FIRST_PAYDAY
+  SECOND_PAYDAY
 }
 
 // ----------------------------------------------------------------------------
@@ -66,15 +64,16 @@ model User {
   name         String?
   role         Role    @default(USER)
   currency     String  @default("PHP")
+  buttonStyle  String  @default("BOTH")
   isActive     Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  paySchedule   PaySchedule?
+  paySchedule    PaySchedule?
   payPeriods    PayPeriod[]
   categories    BudgetCategory[]
-  itemTemplates BudgetItemTemplate[]
+  statuses      BudgetStatus[]
+  automations   Automation[]
 
   @@index([role])
 }
@@ -120,8 +119,8 @@ model BudgetCategory {
   color     String @default("#000000") // hex, drives the row color in UI
   sortOrder Int    @default(0)
 
-  templates BudgetItemTemplate[]
-  items     BudgetItem[]
+  automations Automation[]
+  items       BudgetItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -131,10 +130,33 @@ model BudgetCategory {
 }
 
 // ----------------------------------------------------------------------------
-// Recurring item templates (the "starred" rows that repeat every period)
+// Statuses (user-configurable states for items)
 // ----------------------------------------------------------------------------
 
-model BudgetItemTemplate {
+model BudgetStatus {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String
+  slug      String?
+  color     String @default("#6b7280") // default gray
+  sortOrder Int    @default(0)
+
+  items BudgetItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+// ----------------------------------------------------------------------------
+// Automations (the "starred" rows that repeat every period)
+// ----------------------------------------------------------------------------
+
+model Automation {
   id     String @id @default(cuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -147,6 +169,7 @@ model BudgetItemTemplate {
   defaultAmount Decimal  @db.Decimal(12, 2)
   isStarred     Boolean  @default(true)
   isActive      Boolean  @default(true) // stop generating this item without deleting history
+  recurrence    AutomationRecurrence @default(EVERY_PAYDAY)
   sortOrder     Int      @default(0)
   notes         String?
 
@@ -197,19 +220,22 @@ model BudgetItem {
   payPeriodId String
   payPeriod   PayPeriod @relation(fields: [payPeriodId], references: [id], onDelete: Cascade)
 
-  templateId String?
-  template   BudgetItemTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  automationId String?
+  automation   Automation? @relation(fields: [automationId], references: [id], onDelete: SetNull)
 
   categoryId String?
   category   BudgetCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
-  name      String // copied from template at creation time, editable per period
-  type      ItemType   @default(EXPENSE)
-  amount    Decimal    @db.Decimal(12, 2)
-  isStarred Boolean    @default(false)
-  status    ItemStatus @default(PENDING) // powers the column D dropdown
-  sortOrder Int        @default(0)
-  notes     String?
+  statusId   String?
+  status     BudgetStatus? @relation(fields: [statusId], references: [id], onDelete: SetNull)
+
+  name       String // copied from template at creation time, editable per period
+  type       ItemType   @default(EXPENSE)
+  amount     Decimal    @db.Decimal(12, 2)
+  targetDate DateTime?  // specific date this item is due/happens
+  isStarred  Boolean    @default(false)
+  sortOrder  Int        @default(0)
+  notes      String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
