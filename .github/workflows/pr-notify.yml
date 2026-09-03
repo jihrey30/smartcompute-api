@@ -13,5 +13,5 @@ jobs:
           curl -X POST "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" \
             -H "Content-Type: application/json" \
             -d '{
-              "text": "🔔 New PR: *${{ github.event.pull_request.title }}*\nBy: ${{ github.event.pull_request.user.login }}\n${{ github.event.pull_request.html_url }}"
+              "text": "🔔 *New Pull Request*\n\n📌 *Title:* ${{ github.event.pull_request.title }}\n👤 *Author:* ${{ github.event.pull_request.user.login }}\n🌿 *Branch:* `${{ github.event.pull_request.head.ref }}` → `${{ github.event.pull_request.base.ref }}`\n\n${{ github.event.pull_request.body }}\n\n🔗 ${{ github.event.pull_request.html_url }}\n\nWould appreciate your eyes on it whenever you get a chance 🙏"
             }'
