@@ -1,32 +1,7 @@
-name: Notify Google Chat on PR
-
-on:
-  pull_request:
-    types: [opened, reopened, ready_for_review]
-
-jobs:
-  notify:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send Google Chat notification
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
-        run: |
-          MESSAGE=$(cat <<EOF
-          Hi <users/USER_ID_1> <users/USER_ID_2> <users/USER_ID_3> <users/USER_ID_4> <users/USER_ID_5> <users/USER_ID_6> 🌸
-          PR's all ready and waiting for some feedback from you guys 🙈
-
-          🔀 PR by *${PR_AUTHOR}*: ${PR_TITLE}
-          ${PR_URL}
-
-          Would appreciate your eyes on it whenever you get a chance 🥹🙏 Thank youuu! 💛
-          EOF
-          )
-
-          JSON_PAYLOAD=$(jq -n --arg text "$MESSAGE" '{text: $text}')
-
-          curl -X POST "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" \
-            -H "Content-Type: application/json" \
-            -d "$JSON_PAYLOAD"
+MESSAGE=$(cat <<EOF
+PR's all ready and waiting for some feedback from you guys 🙈
+🔀 PR by *${PR_AUTHOR}*: ${PR_TITLE}
+${PR_URL}
+Would appreciate your eyes on it whenever you get a chance 🥹🙏 Thank youuu! 💛
+EOF
+)
