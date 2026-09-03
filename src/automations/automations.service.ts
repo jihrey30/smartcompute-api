@@ -50,10 +50,15 @@ export class AutomationsService {
           where: { userId },
         });
         if (schedule) {
+          const now = new Date();
+          now.setHours(0, 0, 0, 0);
+          
           const otherPeriods = await this.prisma.payPeriod.findMany({
             where: {
               userId,
               id: { not: startPeriod.id },
+              payDate: { gte: now },
+              isLocked: false
             },
             orderBy: { payDate: 'asc' },
           });
@@ -63,7 +68,7 @@ export class AutomationsService {
           });
 
           for (const period of otherPeriods) {
-            const currentDay = period.payDate.getDate();
+            const currentDay = period.payDate.getUTCDate();
             const isFirstPayday = currentDay === schedule.payDays[0];
             const isSecondPayday = currentDay === schedule.payDays[1];
 
@@ -121,10 +126,72 @@ export class AutomationsService {
     if (!item || item.userId !== userId) {
       throw new UnauthorizedException();
     }
-    return this.prisma.automation.update({
+    const updated = await this.prisma.automation.update({
       where: { id },
       data,
     });
+
+    // Propagate changes to all current and future pay periods
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const futurePeriods = await this.prisma.payPeriod.findMany({
+      where: { userId, payDate: { gte: now }, isLocked: false }
+    });
+
+    const schedule = await this.prisma.paySchedule.findUnique({ where: { userId } });
+    if (schedule && futurePeriods.length > 0) {
+      const toPayStatus = await this.prisma.budgetStatus.findFirst({
+        where: { userId, slug: 'to-pay' },
+      });
+
+      for (const period of futurePeriods) {
+        const currentDay = period.payDate.getUTCDate();
+        const isFirstPayday = currentDay === schedule.payDays[0];
+        const isSecondPayday = currentDay === schedule.payDays[1];
+
+        const shouldExist = 
+          updated.recurrence === 'EVERY_PAYDAY' || 
+          (updated.recurrence === 'FIRST_PAYDAY' && isFirstPayday) || 
+          (updated.recurrence === 'SECOND_PAYDAY' && isSecondPayday);
+
+        if (shouldExist) {
+          const existingItem = await this.prisma.budgetItem.findFirst({
+            where: { payPeriodId: period.id, automationId: updated.id },
+          });
+
+          if (!existingItem) {
+            await this.prisma.budgetItem.create({
+              data: {
+                name: updated.name,
+                amount: updated.defaultAmount,
+                type: updated.type,
+                payPeriod: { connect: { id: period.id } },
+                automation: { connect: { id: updated.id } },
+                ...(updated.categoryId ? { category: { connect: { id: updated.categoryId } } } : {}),
+                ...(toPayStatus ? { status: { connect: { id: toPayStatus.id } } } : {}),
+              },
+            });
+          } else {
+            // Update existing item's amount/type to match automation
+            await this.prisma.budgetItem.update({
+              where: { id: existingItem.id },
+              data: {
+                name: updated.name,
+                amount: updated.defaultAmount,
+                type: updated.type,
+              }
+            });
+          }
+        } else {
+          // It shouldn't exist in this period, so delete it if it exists
+          await this.prisma.budgetItem.deleteMany({
+            where: { payPeriodId: period.id, automationId: updated.id }
+          });
+        }
+      }
+    }
+
+    return updated;
   }
 
   remove(userId: string, id: string) {

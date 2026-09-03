@@ -38,7 +38,7 @@ export class AuthController {
   @Patch('preferences')
   async updatePreferences(
     @Request() req: { user: { userId: string } },
-    @Body() data: { buttonStyle?: string; currency?: string },
+    @Body() data: { buttonStyle?: string; currency?: string; lastViewedPeriodId?: string },
   ) {
     return this.authService.updatePreferences(req.user.userId, data);
   }

@@ -24,6 +24,7 @@ export class PayPeriodsService {
           include: {
             category: true,
             status: true,
+            automation: true,
           },
         },
       },
@@ -38,6 +39,7 @@ export class PayPeriodsService {
           include: {
             category: true,
             status: true,
+            automation: true,
           },
         },
       },
@@ -55,6 +57,15 @@ export class PayPeriodsService {
 
   remove(userId: string, id: string) {
     return this.prisma.payPeriod.deleteMany({ where: { id, userId } });
+  }
+
+  async toggleLock(userId: string, id: string, isLocked: boolean) {
+    const period = await this.prisma.payPeriod.findUnique({ where: { id } });
+    if (!period || period.userId !== userId) throw new UnauthorizedException();
+    return this.prisma.payPeriod.update({
+      where: { id },
+      data: { isLocked },
+    });
   }
 
   async generateNext(userId: string) {

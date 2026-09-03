@@ -60,4 +60,13 @@ export class PayPeriodsController {
   ) {
     return this.payPeriodsService.remove(req.user.userId, id);
   }
+
+  @Patch(':id/lock')
+  toggleLock(
+    @Request() req: { user: { userId: string } },
+    @Param('id') id: string,
+    @Body('isLocked') isLocked: boolean,
+  ) {
+    return this.payPeriodsService.toggleLock(req.user.userId, id, isLocked);
+  }
 }

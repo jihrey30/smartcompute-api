@@ -67,6 +67,20 @@ export class AuthService {
           },
         ],
       },
+      categories: {
+        create: [
+          {
+            name: 'Expense',
+            color: '#8b5cf6', // violet
+            sortOrder: 0,
+          },
+          {
+            name: 'Savings',
+            color: '#3b82f6', // blue
+            sortOrder: 1,
+          },
+        ],
+      },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,7 +98,7 @@ export class AuthService {
 
   async updatePreferences(
     userId: string,
-    data: { buttonStyle?: string; currency?: string },
+    data: { buttonStyle?: string; currency?: string; lastViewedPeriodId?: string },
   ) {
     return this.usersService.update(userId, data);
   }
