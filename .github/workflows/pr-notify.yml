@@ -18,6 +18,17 @@ jobs:
           PR_BASE: ${{ github.event.pull_request.base.ref }}
           REVIEWER_MAP: ${{ vars.REVIEWER_ID_MAP }}
         run: |
+          # Get current hour in Philippines time (adjust TZ if your team is elsewhere)
+          HOUR=$(TZ="Asia/Manila" date +%H)
+
+          if [ "$HOUR" -lt 12 ]; then
+            TIME_GREETING="Good morning"
+          elif [ "$HOUR" -lt 18 ]; then
+            TIME_GREETING="Good afternoon"
+          else
+            TIME_GREETING="Good evening"
+          fi
+
           # Extract everything under "Reviewer(s)" heading until the next "## " heading
           REVIEWERS_SECTION=$(printf '%s' "$PR_BODY" | awk '/Reviewer\(s\)/{flag=1; next} /^## /{flag=0} flag')
 
@@ -30,10 +41,10 @@ jobs:
           done
 
           if [ -z "$MENTIONS" ]; then
-            GREETING="Hi team 🌸
+            GREETING="${TIME_GREETING} Tadiran Team 🌸
           ⚠️ No matching reviewers found — please check the Reviewer(s) section of the PR."
           else
-            GREETING="Hi $MENTIONS 🌸
+            GREETING="${TIME_GREETING} Tadiran Team, $MENTIONS 🌸
           PR's all ready and waiting for some feedback from you guys 🙈"
           fi
 
