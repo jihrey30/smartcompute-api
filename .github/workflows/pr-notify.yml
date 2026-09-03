@@ -18,6 +18,10 @@ jobs:
           PR_BASE: ${{ github.event.pull_request.base.ref }}
           REVIEWER_MAP: ${{ vars.REVIEWER_ID_MAP }}
         run: |
+          echo "DEBUG - REVIEWER_MAP contents:"
+          echo "$REVIEWER_MAP"
+          echo "---"
+
           # Get current hour in Philippines time (adjust TZ if your team is elsewhere)
           HOUR=$(TZ="Asia/Manila" date +%H)
 
