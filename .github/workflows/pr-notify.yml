@@ -48,11 +48,11 @@ jobs:
           MENTIONS=$(echo "$MENTIONS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | sed 's/^ *//; s/ *$//')
 
           if [ -z "$MENTIONS" ]; then
-            GREETING="${TIME_GREETING} Tadiran Team! 🌸
+            GREETING="${TIME_GREETING} Tadiran Team! 
           ⚠️ No matching reviewers found — please check the Reviewer(s) section of the PR."
           else
-            GREETING="${TIME_GREETING} Tadiran Team! 🌸
-          Hi $MENTIONS — PR's all ready and waiting for some feedback from you guys 🙈"
+            GREETING="${TIME_GREETING} Tadiran Team! 
+          Hi $MENTIONS — PR's all ready and waiting for some feedback from you guys"
           fi
 
           MESSAGE="$GREETING
@@ -63,7 +63,7 @@ jobs:
 
           🔗 ${PR_URL}
 
-          Would appreciate your eyes on it whenever you get a chance 🥹🙏 Thank youuu! 💛"
+          Would appreciate your eyes on it whenever you get a chance 🙏 Thank youuu!"
 
           JSON_PAYLOAD=$(jq -n --arg text "$MESSAGE" '{text: $text}')
 
