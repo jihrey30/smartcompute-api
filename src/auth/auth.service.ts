@@ -11,11 +11,13 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateUser(
     email: string,
     pass: string,
+    // sample
+
   ): Promise<UserWithoutPassword | null> {
     const user = await this.usersService.findByEmail(email);
     if (user && user.passwordHash) {
