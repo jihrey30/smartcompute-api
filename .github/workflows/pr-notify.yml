@@ -32,20 +32,21 @@ jobs:
           # Extract everything under "Reviewer(s)" heading until the next "## " heading
           REVIEWERS_SECTION=$(printf '%s' "$PR_BODY" | awk '/Reviewer\(s\)/{flag=1; next} /^## /{flag=0} flag')
 
+          # Match GitHub @usernames in that section against REVIEWER_ID_MAP keys
           MENTIONS=""
           for key in $(echo "$REVIEWER_MAP" | jq -r 'keys[]'); do
-            if echo "$REVIEWERS_SECTION" | grep -qi "$key"; then
+            if echo "$REVIEWERS_SECTION" | grep -qiE "@${key}\b"; then
               id=$(echo "$REVIEWER_MAP" | jq -r --arg k "$key" '.[$k]')
               MENTIONS="$MENTIONS <users/$id>"
             fi
           done
 
           if [ -z "$MENTIONS" ]; then
-            GREETING="${TIME_GREETING} Tadiran Team 🌸
+            GREETING="${TIME_GREETING} Tadiran Team! 🌸
           ⚠️ No matching reviewers found — please check the Reviewer(s) section of the PR."
           else
-            GREETING="${TIME_GREETING} Tadiran Team, $MENTIONS 🌸
-          PR's all ready and waiting for some feedback from you guys 🙈"
+            GREETING="${TIME_GREETING} Tadiran Team! 🌸
+          Hi $MENTIONS — PR's all ready and waiting for some feedback from you guys 🙈"
           fi
 
           MESSAGE="$GREETING
