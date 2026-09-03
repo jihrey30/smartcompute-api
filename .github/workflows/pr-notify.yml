@@ -6,7 +6,7 @@ on:
 
 jobs:
   notify:
-    if: github.event.pull_request.user.login == vars.TARGET_PR_USER
+    if: github.event.pull_request.user.login == 'jihrey30'
     runs-on: ubuntu-latest
     steps:
       - name: Send Google Chat notification
