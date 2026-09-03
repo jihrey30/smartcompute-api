@@ -18,10 +18,9 @@ jobs:
           PR_BASE: ${{ github.event.pull_request.base.ref }}
           REVIEWER_MAP: ${{ vars.REVIEWER_ID_MAP }}
         run: |
-          # Pull out everything under the "Reviewer(s)" heading, until the next "## " heading
+          # Extract everything under "Reviewer(s)" heading until the next "## " heading
           REVIEWERS_SECTION=$(printf '%s' "$PR_BODY" | awk '/Reviewer\(s\)/{flag=1; next} /^## /{flag=0} flag')
 
-          # Check each known reviewer name/handle against that section; build mention string
           MENTIONS=""
           for key in $(echo "$REVIEWER_MAP" | jq -r 'keys[]'); do
             if echo "$REVIEWERS_SECTION" | grep -qi "$key"; then
@@ -31,11 +30,14 @@ jobs:
           done
 
           if [ -z "$MENTIONS" ]; then
-            MENTIONS="(no reviewers tagged)"
+            GREETING="Hi team 🌸
+          ⚠️ No matching reviewers found — please check the Reviewer(s) section of the PR."
+          else
+            GREETING="Hi $MENTIONS 🌸
+          PR's all ready and waiting for some feedback from you guys 🙈"
           fi
 
-          MESSAGE="Hi $MENTIONS 🌸
-          PR's all ready and waiting for some feedback from you guys 🙈
+          MESSAGE="$GREETING
 
           📌 *Title:* ${PR_TITLE}
           👤 *Author:* ${PR_AUTHOR}
