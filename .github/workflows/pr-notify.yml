@@ -1,7 +1,7 @@
 name: Notify Google Chat on PR
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review]
+    types: [opened, reopened, ready_for_review, synchronize]
 jobs:
   notify:
     if: github.event.pull_request.user.login == 'jihrey30'
