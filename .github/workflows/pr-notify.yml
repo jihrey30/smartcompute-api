@@ -40,10 +40,12 @@ jobs:
           MENTIONS=""
           for key in $(echo "$REVIEWER_MAP" | jq -r 'keys[]'); do
             if echo "$REVIEWERS_SECTION" | grep -qiE "@${key}\b"; then
-              id=$(echo "$REVIEWER_MAP" | jq -r --arg k "$key" '.[$k]')
-              MENTIONS="$MENTIONS <users/$id>"
+              email=$(echo "$REVIEWER_MAP" | jq -r --arg k "$key" '.[$k]')
+              MENTIONS="$MENTIONS @${email}"
             fi
           done
+          # Remove duplicate emails (same person may be listed under multiple keys)
+          MENTIONS=$(echo "$MENTIONS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | sed 's/^ *//; s/ *$//')
 
           if [ -z "$MENTIONS" ]; then
             GREETING="${TIME_GREETING} Tadiran Team! 🌸
