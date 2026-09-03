@@ -9,9 +9,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Google Chat notification
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_HEAD: ${{ github.event.pull_request.head.ref }}
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+          REVIEWER_MAP: ${{ vars.REVIEWER_ID_MAP }}
         run: |
+          # Pull out everything under the "Reviewer(s)" heading, until the next "## " heading
+          REVIEWERS_SECTION=$(printf '%s' "$PR_BODY" | awk '/Reviewer\(s\)/{flag=1; next} /^## /{flag=0} flag')
+
+          # Check each known reviewer name/handle against that section; build mention string
+          MENTIONS=""
+          for key in $(echo "$REVIEWER_MAP" | jq -r 'keys[]'); do
+            if echo "$REVIEWERS_SECTION" | grep -qi "$key"; then
+              id=$(echo "$REVIEWER_MAP" | jq -r --arg k "$key" '.[$k]')
+              MENTIONS="$MENTIONS <users/$id>"
+            fi
+          done
+
+          if [ -z "$MENTIONS" ]; then
+            MENTIONS="(no reviewers tagged)"
+          fi
+
+          MESSAGE="Hi $MENTIONS 🌸
+          PR's all ready and waiting for some feedback from you guys 🙈
+
+          📌 *Title:* ${PR_TITLE}
+          👤 *Author:* ${PR_AUTHOR}
+          🌿 *Branch:* \`${PR_HEAD}\` → \`${PR_BASE}\`
+
+          🔗 ${PR_URL}
+
+          Would appreciate your eyes on it whenever you get a chance 🥹🙏 Thank youuu! 💛"
+
+          JSON_PAYLOAD=$(jq -n --arg text "$MESSAGE" '{text: $text}')
+
           curl -X POST "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" \
             -H "Content-Type: application/json" \
-            -d '{
-              "text": "🔔 *New Pull Request*\n\n📌 *Title:* ${{ github.event.pull_request.title }}\n👤 *Author:* ${{ github.event.pull_request.user.login }}\n🌿 *Branch:* `${{ github.event.pull_request.head.ref }}` → `${{ github.event.pull_request.base.ref }}`\n\n${{ github.event.pull_request.body }}\n\n🔗 ${{ github.event.pull_request.html_url }}\n\nWould appreciate your eyes on it whenever you get a chance 🙏"
-            }'
+            -d "$JSON_PAYLOAD"
