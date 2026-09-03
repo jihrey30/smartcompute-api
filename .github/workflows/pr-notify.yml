@@ -1,9 +1,7 @@
 name: Notify Google Chat on PR
-
 on:
   pull_request:
     types: [opened, reopened, ready_for_review]
-
 jobs:
   notify:
     if: github.event.pull_request.user.login == 'jihrey30'
@@ -14,5 +12,5 @@ jobs:
           curl -X POST "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" \
             -H "Content-Type: application/json" \
             -d '{
-              "text": "Hi team 🌸\nPR'\''s all ready and waiting for some feedback from you guys 🙈\n\n🔀 PR by *${{ github.event.pull_request.user.login }}*: ${{ github.event.pull_request.title }}\n${{ github.event.pull_request.html_url }}\n\nWould appreciate your eyes on it whenever you get a chance 🥹🙏 Thank youuu! 💛"
+              "text": "🔔 New PR: *${{ github.event.pull_request.title }}*\nBy: ${{ github.event.pull_request.user.login }}\n${{ github.event.pull_request.html_url }}"
             }'
