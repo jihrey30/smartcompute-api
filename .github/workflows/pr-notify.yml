@@ -1,10 +1,12 @@
 name: Notify Google Chat on PR
+
 on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
+
 jobs:
   notify:
-    if: github.event.pull_request.user.login == 'jihrey30'
+    if: github.event.pull_request.user.login == vars.TARGET_PR_USER
     runs-on: ubuntu-latest
     steps:
       - name: Send Google Chat notification
